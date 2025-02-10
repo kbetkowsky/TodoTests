@@ -1,5 +1,6 @@
-package com.example.todoapp.controller;
+package com.example.todoapp;
 
+import com.example.todoapp.controller.TodoController;
 import com.example.todoapp.entity.TodoItem;
 import com.example.todoapp.repository.TodoItemRepository;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,6 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -48,7 +48,7 @@ class TodoControllerTest {
     }
 
     @Test
-    void addTodo_ShouldSaveNewTodoAndRedirect() {
+    void addShouldSaveNewTodo() {
 
         //given
         TodoItem newTodo = new TodoItem("New Task");
@@ -62,7 +62,7 @@ class TodoControllerTest {
     }
 
     @Test
-    void toggleTodo_ShouldToggleStatusWhenTodoExists() {
+    void toggleShouldToggleStatusWhenTodoExists() {
 
         //given
         TodoItem existingTodo = new TodoItem("Task");
@@ -80,7 +80,7 @@ class TodoControllerTest {
     }
 
     @Test
-    void deleteShouldDeleteTaskAndRedirect() {
+    void deleteShouldDeleteTask() {
 
         //given
         Long id = 1L;
