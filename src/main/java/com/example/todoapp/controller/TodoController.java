@@ -47,17 +47,4 @@ public class TodoController {
         todoItemRepository.deleteById(id);
         return "redirect:/";
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

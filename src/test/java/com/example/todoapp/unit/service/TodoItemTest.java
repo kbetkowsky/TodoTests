@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.example.todoapp.unit.service;
 
 import com.example.todoapp.entity.TodoItem;
 import org.junit.jupiter.api.BeforeEach;

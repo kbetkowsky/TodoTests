@@ -1,4 +1,4 @@
-package com.example.todoapp;
+package com.example.todoapp.unit.controller;
 
 import com.example.todoapp.controller.TodoController;
 import com.example.todoapp.entity.TodoItem;
