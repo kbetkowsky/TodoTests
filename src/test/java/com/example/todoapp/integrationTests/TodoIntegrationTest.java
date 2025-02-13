@@ -12,8 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -49,5 +48,30 @@ public class TodoIntegrationTest {
         assertThat(todoItems).hasSize(1);
         assertThat(todoItems.get(0).getTitle()).isEqualTo("zadanie testowe");
         assertThat(todoItems.get(0).isCompleted()).isFalse();
+    }
+
+    @Test
+    void shouldToggleSwtichToComplete() throws Exception {
+        TodoItem todoItem = new TodoItem("new test task");
+        todoItemRepository.save(todoItem);
+
+        mockMvc.perform(post("/toggle/" + todoItem.getId()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+
+        TodoItem updatedTodo = todoItemRepository.findById(todoItem.getId()).orElseThrow();
+        assertThat(updatedTodo.isCompleted()).isTrue();
+    }
+
+    @Test
+    void shouldDeleteTodo() throws Exception {
+        TodoItem todoItem = new TodoItem("test task");
+        todoItemRepository.save(todoItem);
+
+        mockMvc.perform(delete("/delete/" + todoItem.getId()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+
+        assertThat(todoItemRepository.findAll()).isEmpty();
     }
 }
