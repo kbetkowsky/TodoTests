@@ -2,9 +2,11 @@ package com.example.todoapp.controller;
 
 import com.example.todoapp.entity.TodoItem;
 import com.example.todoapp.repository.TodoItemRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +26,13 @@ public class TodoController {
     }
 
     @PostMapping("/add")
-    public String addTodo(@ModelAttribute TodoItem newTodo) {
+    public String addTodo(@Valid @ModelAttribute("newTodo") TodoItem newTodo,
+                          BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            List<TodoItem> todoItems = todoItemRepository.findAll();
+            model.addAttribute("todoItems", todoItems);
+            return "index";
+        }
         todoItemRepository.save(newTodo);
         return "redirect:/";
     }

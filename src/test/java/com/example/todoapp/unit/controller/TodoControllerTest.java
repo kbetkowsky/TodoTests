@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,12 @@ import static org.mockito.ArgumentMatchers.any;
 class TodoControllerTest {
     @Mock
     private TodoItemRepository todoItemRepository;
+
+    @Mock
+    private BindingResult bindingResult;
+
+    @Mock
+    private Model model;
 
     @InjectMocks
     private TodoController todoController;
@@ -52,9 +59,10 @@ class TodoControllerTest {
 
         //given
         TodoItem newTodo = new TodoItem("New Task");
-
+        Model model = new ConcurrentModel();
+        when(bindingResult.hasErrors()).thenReturn(false);
         //when
-        String redirect = todoController.addTodo(newTodo);
+        String redirect = todoController.addTodo(newTodo, bindingResult, model);
 
         //then
         verify(todoItemRepository).save(newTodo);
@@ -92,4 +100,51 @@ class TodoControllerTest {
         verify(todoItemRepository).deleteById(id);
         assertThat(redirect, equalTo("redirect:/"));
     }
+
+    @Test
+    void shouldAddTodoWithValidTitleThenSaveTodo() {
+
+        //given
+        TodoItem newTodo = new TodoItem("Valid title");
+        Model model = new ConcurrentModel();
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        //when
+        String viewTitle = todoController.addTodo(newTodo, bindingResult, model);
+
+        //then
+        verify(todoItemRepository, times(1)).save(newTodo);
+        assertThat(viewTitle, equalTo("redirect:/"));
+    }
+
+
+
+    @Test
+    void whenAddTodoWithEmptyTitleShouldReturnIndexWithErrors() {
+
+        //given
+        TodoItem todoItem = new TodoItem("");
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        List<TodoItem> todoItems = Arrays.asList(new TodoItem("Task 1"),
+                new TodoItem("Task 2"));
+        when(todoItemRepository.findAll()).thenReturn(todoItems);
+
+        //when
+        String viewTask = todoController.addTodo(todoItem, bindingResult, model);
+
+        //then
+        verify(todoItemRepository, never()).save(todoItem);
+        verify(model, times(1)).addAttribute("todoItems", todoItems);
+        assertThat(viewTask, equalTo("index"));
+    }
 }
+
+
+
+
+
+
+
+
+
